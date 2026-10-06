@@ -1,3 +1,5 @@
+import { createClient } from "@supabase/supabase-js";
+
 type StrengthLabel =
   | "Very Weak"
   | "Weak"
@@ -48,44 +50,46 @@ export interface SecurityAggregates {
   };
 }
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.replace(/\/+$/, "");
-const supabaseKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+const supabaseUrl = import.meta.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/+$/, "");
+const supabasePublishableKey =
+  import.meta.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-export const supabaseEnabled = Boolean(supabaseUrl && supabaseKey);
+const supabaseClient =
+  supabaseUrl && supabasePublishableKey
+    ? createClient(supabaseUrl, supabasePublishableKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+        },
+      })
+    : null;
 
-function requireConfiguration(): { url: string; key: string } {
-  if (!supabaseUrl || !supabaseKey) {
+export const supabaseEnabled = supabaseClient !== null;
+
+function requireSupabaseClient() {
+  if (!supabaseClient) {
     throw new Error(
       "Anonymous saving is unavailable because Supabase is not configured.",
     );
   }
-  return { url: supabaseUrl, key: supabaseKey };
+  return supabaseClient;
 }
 
 async function insertAnonymousRecord(
-  table: string,
-  payload: object,
+  table: "password_evaluations" | "quiz_results" | "security_checklists",
+  payload: Record<string, unknown>,
 ): Promise<void> {
-  const { url, key } = requireConfiguration();
-  let response: Response;
+  const client = requireSupabaseClient();
   try {
-    response = await fetch(`${url}/rest/v1/${table}`, {
-      method: "POST",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify(payload),
-    });
+    const { error } = await client.from(table).insert(payload);
+    if (error) {
+      throw new Error(
+        "The anonymous result could not be saved. Check the Supabase setup.",
+      );
+    }
   } catch {
-    throw new Error("Could not reach the anonymous saving service.");
-  }
-  if (!response.ok) {
-    throw new Error(
-      "The anonymous result could not be saved. Check the Supabase setup.",
-    );
+    throw new Error("The anonymous result could not be saved.");
   }
 }
 
@@ -133,28 +137,18 @@ export function saveChecklist(checklist: ChecklistInput): Promise<void> {
 }
 
 export async function loadSecurityAggregates(): Promise<SecurityAggregates> {
-  const { url, key } = requireConfiguration();
-  let response: Response;
+  const client = requireSupabaseClient();
+  let data: unknown;
   try {
-    response = await fetch(`${url}/rest/v1/rpc/get_securepass_aggregates`, {
-      method: "POST",
-      headers: {
-        apikey: key,
-        Authorization: `Bearer ${key}`,
-        "Content-Type": "application/json",
-      },
-      body: "{}",
-    });
+    const { data: aggregateData, error } = await client.rpc(
+      "get_securepass_aggregates",
+    );
+    if (error) throw new Error("Aggregate request failed.");
+    data = aggregateData;
   } catch {
     throw new Error("Could not reach the anonymous insights service.");
   }
-  if (!response.ok) {
-    throw new Error(
-      "Anonymous insights are unavailable. Check the Supabase setup.",
-    );
-  }
 
-  const data: unknown = await response.json();
   if (!isSecurityAggregates(data)) {
     throw new Error("The anonymous insights response was not valid.");
   }

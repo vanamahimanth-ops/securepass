@@ -59,8 +59,8 @@ There are no password or password-hash fields. Anonymous users can insert record
 
 Copy `.env.example` to `.env.local` for local setup:
 
-- `VITE_SUPABASE_URL` — your Supabase project URL.
-- `VITE_SUPABASE_PUBLISHABLE_KEY` — your Supabase publishable (formerly anon) key.
+- `NEXT_PUBLIC_SUPABASE_URL` — your Supabase project URL.
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` — your Supabase publishable (formerly anon) key.
 
 Both values are optional for local-only use. Without them, the checker, quiz, and checklist still work, while saving and live anonymous insights are disabled. Never put a service-role key in frontend configuration.
 
@@ -82,7 +82,7 @@ pnpm --filter @workspace/securepass run typecheck
 
 1. Create a Supabase project.
 2. Run `supabase/schema.sql` in the SQL Editor.
-3. Add the project URL and publishable key to Replit Secrets or the Vercel environment variables as `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`.
+3. Add the project URL and publishable key to Replit environment variables or Vercel environment variables as `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
 4. Never use a Supabase service-role key in this browser app.
 5. Leave saving disabled until the schema and RLS setup have been applied.
 

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   Activity, ArrowDownRight, ArrowRight, ArrowUpRight, BookOpen, Check, CheckCircle2,
@@ -398,12 +398,13 @@ function DashboardPage() {
   const [data, setData] = useState<Aggregates | null>(null);
   const [state, setState] = useState<'idle' | 'pending' | 'success' | 'error' | 'unavailable'>('idle');
   const [message, setMessage] = useState('');
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     if (!supabaseEnabled) { setState('unavailable'); setMessage('Aggregate insights are unavailable until anonymous data storage is configured.'); return; }
     setState('pending'); setMessage('');
     try { const result = await loadSecurityAggregates(); setData(result); setState('success'); setMessage('Aggregate insights refreshed.'); }
     catch { setState('error'); setMessage('We could not load aggregates right now. Illustrative examples are shown instead.'); }
-  };
+  }, []);
+  useEffect(() => { void refresh(); }, [refresh]);
   const effectiveData = data && (data.totals.evaluations + data.totals.quizzes + data.totals.checklists > 0) ? data : sampleAggregate;
   const illustrative = !data || (data.totals.evaluations + data.totals.quizzes + data.totals.checklists === 0);
   const checklistTotal = checklistItems.length;
@@ -416,7 +417,7 @@ function DashboardPage() {
   const securityScore = Math.round(checklistScore * 0.4 + quizPercentage * 0.35 + passwordPracticeScore * 0.25);
   return <div className="page-wrap">
     <PageIntro eyebrow="LEARNING OVERVIEW" title="Learning, at a glance." description="A calm view of the habits and topics at the heart of password safety." />
-    <div className="dashboard-notice"><Info size={17} /><p><b>Your learning stays yours.</b> Your progress score uses only temporary in-memory session results and resets when this page is closed. Community aggregates load only when you ask.</p><button type="button" className="button button-secondary compact" onClick={refresh} disabled={state === 'pending'} data-testid="button-refresh-insights">{state === 'pending' ? 'Refreshing…' : 'Refresh insights'}<RotateCcw size={14} /></button></div>
+    <div className="dashboard-notice"><Info size={17} /><p><b>Your learning stays yours.</b> Your progress score uses only temporary in-memory session results and resets when this page is closed. Community insights use aggregate counts only; individual submissions stay private.</p><button type="button" className="button button-secondary compact" onClick={refresh} disabled={state === 'pending'} data-testid="button-refresh-insights">{state === 'pending' ? 'Refreshing…' : 'Refresh insights'}<RotateCcw size={14} /></button></div>
     {message && <p className={`save-message ${state}`} role="status">{message}</p>}
     {!supabaseEnabled && <div className="config-note"><span className="config-dot" /><div><b>Aggregate data are not connected</b><p>Anonymous insight loading is not configured. Charts below are clearly marked illustrative examples, not collected data.</p></div></div>}
     <div className="stat-strip">
