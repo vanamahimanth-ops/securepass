@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "SecurePass"
+description = "A privacy-first password security education app with local-only password evaluation, interactive security learning, a quiz, checklist, and optional anonymous insights."
+version = "1.0.0"
+id = "artifacts/securepass"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24602
+
+[services.development]
+run = "pnpm --filter @workspace/securepass run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/securepass", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/securepass/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24602"
+BASE_PATH = "/"

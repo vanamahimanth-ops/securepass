@@ -1,0 +1,1027 @@
+Build a complete, production-ready full-stack web application called **SecurePass — Password Security Coach**.
+
+## 1. PROJECT PROBLEM
+
+Create an application that teaches users about password security and evaluates password practices without storing actual passwords.
+
+The core privacy requirement is extremely important:
+
+**The actual password entered by a user must NEVER be stored, logged, transmitted to the backend, sent to Supabase, sent to analytics, placed in URLs, or exposed in error messages.**
+
+Password evaluation must happen entirely in the user's browser/client side.
+
+Only non-sensitive password characteristics and anonymous results may be stored in Supabase.
+
+The application should be suitable for a college project, demonstration, GitHub repository, and Vercel deployment.
+
+---
+
+# 2. TECHNOLOGY STACK
+
+Use:
+
+- Next.js with App Router
+- React
+- TypeScript
+- Tailwind CSS
+- Supabase
+- Lucide React icons or another lightweight icon library
+- Recharts for safe anonymous statistics/charts if required
+- ESLint
+- Git/GitHub compatible project structure
+- Vercel-compatible deployment
+
+Use reusable components and clean folder organization.
+
+Do not introduce unnecessary frameworks or dependencies.
+
+---
+
+# 3. APPLICATION NAME
+
+Application name:
+
+**SecurePass**
+
+Tagline:
+
+**"Build stronger password habits. Protect your digital life."**
+
+Use a professional cybersecurity/education visual style.
+
+The UI should look like a real SaaS product rather than a basic student project.
+
+---
+
+# 4. MAIN NAVIGATION
+
+Create a responsive navigation bar containing:
+
+- SecurePass logo
+- Home
+- Password Checker
+- Learn
+- Security Quiz
+- Security Checklist
+- Dashboard
+
+On mobile, use a responsive hamburger menu.
+
+Add a footer containing:
+
+- SecurePass
+- Privacy
+- Security
+- About
+- "Passwords are evaluated locally in your browser."
+
+---
+
+# 5. HOME PAGE
+
+Create an attractive landing page.
+
+Hero section:
+
+Heading:
+
+**Protect Your Digital Life With Better Password Habits**
+
+Description:
+
+"Learn how passwords can be attacked, evaluate your password practices privately, and build safer security habits — without storing your actual passwords."
+
+Buttons:
+
+- Check My Password
+- Learn Password Security
+
+Add a privacy badge:
+
+**🔒 Your password never leaves your browser.**
+
+Add feature cards:
+
+1. Private Password Analysis
+2. Security Education
+3. Security Quiz
+4. Security Checklist
+5. Anonymous Insights
+
+Add a "How it works" section:
+
+Step 1:
+Enter a password.
+
+Step 2:
+The browser evaluates it locally.
+
+Step 3:
+Only non-sensitive security characteristics are optionally stored.
+
+Step 4:
+View your security insights.
+
+Make the privacy architecture visually clear.
+
+---
+
+# 6. PASSWORD CHECKER
+
+Create a dedicated `/checker` or `/password-checker` page.
+
+The page must contain:
+
+- Password input
+- Show/hide password button
+- Strength meter
+- Strength label
+- Security score
+- Detailed checks
+- Improvement suggestions
+- Privacy message
+
+Example UI:
+
+Password:
+
+[ ••••••••••••• ] [Show]
+
+Strength:
+
+████████░░ Strong
+
+Security score:
+
+82/100
+
+Checks:
+
+✓ At least 12 characters
+✓ Contains uppercase letters
+✓ Contains lowercase letters
+✓ Contains numbers
+✓ Contains special characters
+
+Suggestions:
+
+- Avoid predictable patterns.
+- Avoid using personal information.
+- Use a unique password for each account.
+- Consider using a password manager.
+
+## Password analysis rules
+
+Analyze the password locally using client-side TypeScript.
+
+Check:
+
+- Length
+- Uppercase characters
+- Lowercase characters
+- Numbers
+- Special characters
+- Repeated characters
+- Sequential patterns
+- Common weak passwords
+- Common patterns such as:
+  - password
+  - 123456
+  - qwerty
+  - admin
+  - welcome
+  - letmein
+- Obvious sequences such as:
+  - 1234
+  - abcd
+  - qwerty
+
+Do not claim that this is a perfect security guarantee.
+
+Use labels:
+
+- Very Weak
+- Weak
+- Fair
+- Strong
+- Very Strong
+
+Calculate a reasonable security score from 0–100.
+
+Clearly explain that the score is an educational estimate and not a guarantee against cracking.
+
+## CRITICAL SECURITY RULE
+
+Never send the actual password anywhere.
+
+Do NOT:
+
+- send it to an API
+- send it to Next.js server actions
+- send it to Supabase
+- save it in localStorage
+- save it in sessionStorage
+- save it in cookies
+- put it in query parameters
+- put it in URL fragments
+- store it in React analytics
+- log it using console.log
+- include it in error messages
+- include it in telemetry
+- store it in browser history
+
+Keep password analysis entirely in client-side memory.
+
+When the user clears or leaves the page, the password should no longer be retained by application state.
+
+Never hash the password and store the hash either. The requirement is that actual passwords should not be stored.
+
+---
+
+# 7. OPTIONAL ANONYMOUS EVALUATION STORAGE
+
+After evaluating a password locally, provide an option such as:
+
+"Help improve anonymous statistics"
+
+If enabled, send ONLY non-sensitive characteristics to Supabase.
+
+Example data:
+
+{
+  strength: "Strong",
+  length_category: "12-15",
+  has_uppercase: true,
+  has_lowercase: true,
+  has_number: true,
+  has_special: true,
+  has_sequence: false,
+  created_at: timestamp
+}
+
+Never send:
+
+{
+  password: "..."
+}
+
+Never send a password hash.
+
+Never send the exact password length if it could be considered unnecessary identifying information; preferably use categories such as:
+
+- 1-7
+- 8-11
+- 12-15
+- 16+
+
+---
+
+# 8. LEARN PAGE
+
+Create `/learn`.
+
+Create educational sections/cards for:
+
+## Strong Passwords
+
+Explain:
+- Length matters
+- Variety helps
+- Avoid predictable patterns
+- Avoid personal information
+
+## Password Reuse
+
+Explain why using the same password across multiple websites is risky.
+
+## Passphrases
+
+Explain how longer memorable phrases can be useful.
+
+Do not encourage users to use a specific example as their real password.
+
+## Password Managers
+
+Explain:
+- What they do
+- Why they are useful
+- Why users should protect the password manager account
+
+## Multi-Factor Authentication
+
+Explain:
+- What MFA is
+- Why it adds another security layer
+- Examples of authentication factors
+
+## Phishing
+
+Explain:
+- Suspicious links
+- Fake login pages
+- Urgent messages
+- Checking website addresses
+
+## Common Password Mistakes
+
+Examples:
+- Password123
+- Reusing passwords
+- Using names/birthdays
+- Sharing passwords
+- Using predictable patterns
+
+Create attractive educational cards with icons.
+
+---
+
+# 9. SECURITY QUIZ
+
+Create `/quiz`.
+
+Create at least 10 multiple-choice questions covering:
+
+- Strong passwords
+- Password reuse
+- Password managers
+- MFA
+- Phishing
+- Social engineering
+- Password sharing
+- Passphrases
+- Common password mistakes
+- Privacy
+
+Each question should have:
+
+- Question
+- 4 options
+- One correct answer
+- Explanation after answering
+
+At the end show:
+
+- Score
+- Percentage
+- Correct answers
+- Incorrect answers
+- Security level
+
+Example:
+
+90–100:
+Excellent Security Awareness
+
+70–89:
+Good Security Awareness
+
+50–69:
+Needs Improvement
+
+Below 50:
+Start Learning
+
+Allow:
+
+- Retry Quiz
+- Review Answers
+- Learn More
+
+Store only the final quiz score and total number of questions in Supabase if the user chooses to save results.
+
+Never store individual sensitive information.
+
+---
+
+# 10. SECURITY CHECKLIST
+
+Create `/checklist`.
+
+Include:
+
+☐ I use unique passwords for important accounts.
+
+☐ I avoid using personal information in passwords.
+
+☐ I use a password manager when appropriate.
+
+☐ I enable multi-factor authentication.
+
+☐ I do not share passwords with other people.
+
+☐ I can identify common phishing attempts.
+
+☐ I avoid using predictable password patterns.
+
+☐ I review security settings on important accounts.
+
+Show a progress indicator:
+
+Security Checklist
+6 / 8 completed
+
+75%
+
+Add encouraging messages based on progress.
+
+Allow checklist results to be stored in Supabase.
+
+Do not store passwords.
+
+---
+
+# 11. DASHBOARD
+
+Create `/dashboard`.
+
+Create a professional dashboard containing:
+
+## Security Score
+
+Calculate an educational score from:
+
+- Checklist progress
+- Quiz performance
+- Password-checking activity
+
+Do not store actual passwords.
+
+Display:
+
+Security Score
+82/100
+
+## Checklist Progress
+
+Example:
+
+75% complete
+
+## Quiz Performance
+
+Example:
+
+8/10
+
+## Anonymous Password Insights
+
+Show charts such as:
+
+- Weak/Fair/Strong distribution
+- Length categories
+- Character-type usage
+
+Use Recharts if appropriate.
+
+Make it clear that statistics are anonymous and based only on non-sensitive characteristics.
+
+---
+
+# 12. SUPABASE DATABASE
+
+Create database integration using Supabase.
+
+Use environment variables.
+
+Expected environment variables:
+
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+
+Do not hardcode credentials.
+
+Do not expose any service-role key in frontend code.
+
+## Table 1: password_evaluations
+
+Use fields equivalent to:
+
+id UUID primary key
+strength TEXT
+length_category TEXT
+has_uppercase BOOLEAN
+has_lowercase BOOLEAN
+has_number BOOLEAN
+has_special BOOLEAN
+has_sequence BOOLEAN
+created_at TIMESTAMPTZ
+
+There must be NO password column.
+
+There must be NO password_hash column.
+
+## Table 2: quiz_results
+
+Fields:
+
+id UUID primary key
+score INTEGER
+total_questions INTEGER
+created_at TIMESTAMPTZ
+
+## Table 3: security_checklists
+
+Fields:
+
+id UUID primary key
+strong_unique_passwords BOOLEAN
+password_manager BOOLEAN
+multi_factor_authentication BOOLEAN
+avoids_password_sharing BOOLEAN
+recognizes_phishing BOOLEAN
+avoids_predictable_patterns BOOLEAN
+reviews_security_settings BOOLEAN
+created_at TIMESTAMPTZ
+
+---
+
+# 13. SUPABASE SECURITY
+
+Use appropriate Row Level Security policies.
+
+Do not expose database secrets.
+
+The application must be designed so anonymous users can perform only the minimum necessary operations.
+
+Do not allow users to read arbitrary sensitive database rows.
+
+Only expose aggregate/statistical information needed by the dashboard.
+
+If authentication is implemented, use Supabase Auth and associate records with the authenticated user's ID where appropriate.
+
+Do not store passwords entered into the password checker as authentication credentials.
+
+---
+
+# 14. PRIVACY PAGE
+
+Create `/privacy`.
+
+Explain clearly:
+
+### What we do
+
+SecurePass evaluates password characteristics locally in the browser.
+
+### What we never store
+
+- Actual passwords
+- Password hashes
+- Password input history
+
+### What may be stored
+
+Only anonymous/non-sensitive security characteristics and optional quiz/checklist results.
+
+### Why
+
+The purpose is to teach password security while minimizing privacy risks.
+
+Add a prominent statement:
+
+**"Never enter a real password into a demonstration application. Use a test password instead."**
+
+---
+
+# 15. SECURITY PAGE
+
+Create `/security`.
+
+Explain the application's security architecture.
+
+Show this flow visually:
+
+User Password
+↓
+Browser
+↓
+Local Analysis
+↓
+Anonymous Security Characteristics
+↓
+Supabase
+
+Clearly indicate:
+
+**The password stops at the browser.**
+
+Do not imply that the application provides perfect security.
+
+---
+
+# 16. ABOUT PAGE
+
+Create `/about`.
+
+Explain:
+
+SecurePass is an educational project designed to help users understand password security while following a privacy-first approach.
+
+Include:
+
+- Problem
+- Solution
+- Technologies
+- Privacy approach
+- Future improvements
+
+---
+
+# 17. ERROR HANDLING
+
+Implement proper:
+
+- Loading states
+- Empty states
+- Error messages
+- Supabase connection errors
+- Quiz errors
+- Form validation
+- Responsive error UI
+
+Never display sensitive values in errors.
+
+Never log password values.
+
+---
+
+# 18. ACCESSIBILITY
+
+Follow good accessibility practices:
+
+- Proper labels
+- Keyboard navigation
+- Accessible buttons
+- Sufficient contrast
+- ARIA labels where needed
+- Focus states
+- Semantic HTML
+
+---
+
+# 19. RESPONSIVE DESIGN
+
+The application must work well on:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+Test navigation and cards on small screens.
+
+---
+
+# 20. DESIGN SYSTEM
+
+Use a modern cybersecurity-inspired design.
+
+Suggested visual direction:
+
+- Dark navy/blue background
+- White/light cards
+- Cyan/blue accent colors
+- Green success states
+- Orange warning states
+- Red danger states
+
+Use gradients sparingly.
+
+Use clean cards with rounded corners.
+
+Use subtle shadows.
+
+Do not overcrowd the interface.
+
+Use consistent typography.
+
+---
+
+# 21. COMPONENT ARCHITECTURE
+
+Create reusable components such as:
+
+- Navbar
+- Footer
+- Hero
+- PasswordInput
+- PasswordStrengthMeter
+- SecurityCheck
+- SecurityScore
+- FeatureCard
+- LearningCard
+- QuizQuestion
+- QuizResult
+- ChecklistItem
+- ProgressBar
+- DashboardCard
+- PrivacyNotice
+- LoadingState
+- ErrorMessage
+
+Keep components modular.
+
+---
+
+# 22. FOLDER STRUCTURE
+
+Use a clean Next.js structure similar to:
+
+app/
+  page.tsx
+  checker/
+    page.tsx
+  learn/
+    page.tsx
+  quiz/
+    page.tsx
+  checklist/
+    page.tsx
+  dashboard/
+    page.tsx
+  privacy/
+    page.tsx
+  security/
+    page.tsx
+  about/
+    page.tsx
+
+components/
+  Navbar.tsx
+  Footer.tsx
+  PasswordInput.tsx
+  PasswordStrengthMeter.tsx
+  SecurityScore.tsx
+  QuizQuestion.tsx
+  ChecklistItem.tsx
+  DashboardCard.tsx
+  PrivacyNotice.tsx
+
+lib/
+  password-checker.ts
+  supabase.ts
+  quiz-data.ts
+
+public/
+
+---
+
+# 23. PASSWORD SECURITY IMPLEMENTATION
+
+Create a dedicated client-side utility such as:
+
+lib/password-checker.ts
+
+It should accept a password only in browser memory and return an object containing non-sensitive analysis:
+
+{
+  score,
+  strength,
+  lengthCategory,
+  hasUppercase,
+  hasLowercase,
+  hasNumber,
+  hasSpecial,
+  hasSequence,
+  suggestions
+}
+
+Do not persist the password.
+
+Do not return the password from the utility.
+
+Do not send the password to Supabase.
+
+Use TypeScript types.
+
+---
+
+# 24. SECURITY LOGGING RULE
+
+Absolutely never write:
+
+console.log(password)
+
+or:
+
+console.error(password)
+
+or:
+
+console.log(formData)
+
+if formData contains the password.
+
+Sanitize error handling.
+
+---
+
+# 25. NO PASSWORD STORAGE
+
+Do not use:
+
+localStorage.setItem("password", ...)
+sessionStorage.setItem("password", ...)
+document.cookie = password
+Supabase password column
+API request containing password
+URL containing password
+
+Do not create any functionality that stores the password.
+
+---
+
+# 26. ENVIRONMENT CONFIGURATION
+
+Create a `.env.example` file containing:
+
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+
+Do not include actual credentials.
+
+Make sure `.gitignore` contains:
+
+.env
+.env.local
+.env*.local
+
+Never commit secrets.
+
+---
+
+# 27. DATABASE SQL
+
+Create a documentation file such as:
+
+supabase/schema.sql
+
+containing SQL for creating the required tables.
+
+Example structure:
+
+CREATE TABLE password_evaluations (...);
+
+CREATE TABLE quiz_results (...);
+
+CREATE TABLE security_checklists (...);
+
+Also include appropriate indexes and RLS policies.
+
+Do not include passwords or secret credentials in the SQL.
+
+---
+
+# 28. README
+
+Create a professional README.md containing:
+
+# SecurePass
+
+## Problem Statement
+
+## Objective
+
+## Features
+
+## Technology Stack
+
+## Architecture
+
+## Privacy Design
+
+## Database Design
+
+## Folder Structure
+
+## Environment Variables
+
+## Local Development
+
+## Supabase Setup
+
+## GitHub Setup
+
+## Vercel Deployment
+
+## Security Considerations
+
+## Future Enhancements
+
+Clearly state:
+
+"SecurePass never stores the actual passwords entered into the password checker."
+
+---
+
+# 29. VERCEL COMPATIBILITY
+
+Ensure the application can be deployed to Vercel.
+
+Avoid functionality that requires a permanent server process.
+
+Use standard Next.js deployment practices.
+
+Make sure all environment variables are configurable through Vercel.
+
+---
+
+# 30. GITHUB COMPATIBILITY
+
+Make the project ready for GitHub.
+
+Ensure:
+
+- No secrets in source code
+- `.gitignore` exists
+- `.env.example` exists
+- README exists
+- Clean project structure
+- No unnecessary files
+- No generated secrets
+
+---
+
+# 31. DEMO DATA
+
+If dashboard charts need initial data, use clearly marked non-sensitive demo data.
+
+Never create fake real passwords.
+
+Do not use real user credentials.
+
+Use examples such as:
+
+"Demo Strong Password"
+
+only as UI text and never process it as an actual credential.
+
+---
+
+# 32. SECURITY WARNING
+
+Add a small notice on the password checker:
+
+"Use a test password for demonstrations. Never enter a password that you currently use for a real account."
+
+This should be visible but not intrusive.
+
+---
+
+# 33. FINAL QUALITY CHECK
+
+Before considering the project complete, verify:
+
+1. Application starts successfully.
+2. No TypeScript errors.
+3. No build errors.
+4. No broken routes.
+5. All navigation links work.
+6. Password checker works.
+7. Password analysis happens locally.
+8. Actual passwords never reach Supabase.
+9. No password is stored in localStorage.
+10. No password is stored in sessionStorage.
+11. No password is placed in URLs.
+12. No password is printed to console.
+13. Supabase integration works.
+14. Dashboard loads correctly.
+15. Quiz works.
+16. Checklist works.
+17. Privacy page works.
+18. Security page works.
+19. Mobile UI works.
+20. `.env` is ignored.
+21. `.env.example` exists.
+22. README exists.
+23. Project can be pushed to GitHub.
+24. Project can be deployed to Vercel.
+
+---
+
+# 34. IMPORTANT DEVELOPMENT INSTRUCTION
+
+Build the project completely rather than creating only a prototype.
+
+Do not stop after creating the homepage.
+
+Implement all pages, components, functionality, Supabase integration, database schema, security controls, responsive UI, README, and deployment configuration.
+
+If Supabase credentials are not available yet, build the application with a clean Supabase integration layer and clear environment-variable placeholders. Do not invent credentials.
+
+If a feature cannot safely be implemented, prioritize privacy and security over the feature.
+
+After implementation, run the project, fix errors, and ensure the application builds successfully.
+
+At the end, provide a concise summary of:
+
+- Files created
+- Features implemented
+- Supabase tables required
+- Environment variables required
+- Commands needed to run locally
+- Steps required to connect GitHub
+- Steps required to deploy to Vercel
+- Any remaining configuration required from the developer
+
+The final application should feel like a polished, professional cybersecurity education platform and not a basic generated demo.
