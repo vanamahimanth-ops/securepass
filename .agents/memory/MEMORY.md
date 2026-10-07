@@ -1,0 +1,1 @@
+- [GitHub CLI authentication](github-cli-auth.md) — verify Replit's GitHub link with an actual push; connector health alone may not authorize shell Git.
